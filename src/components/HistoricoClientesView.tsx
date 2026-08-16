@@ -79,8 +79,45 @@ export function HistoricoClientesView() {
   const [selectedAlbaranDetail, setSelectedAlbaranDetail] = useState<ExportAlbaran | null>(null);
   // Modal para ver documento original PDF
   const [viewingPdfAlbaran, setViewingPdfAlbaran] = useState<ExportAlbaran | null>(null);
+  const [blobPdfUrl, setBlobPdfUrl] = useState<string | null>(null);
   // Modal para editar/personalizar albarán
   const [editingAlbaran, setEditingAlbaran] = useState<ExportAlbaran | null>(null);
+
+  useEffect(() => {
+    if (!viewingPdfAlbaran?.pdf_data) {
+      setBlobPdfUrl(null);
+      return;
+    }
+
+    const rawData = viewingPdfAlbaran.pdf_data;
+    if (rawData.startsWith("data:image/")) {
+      setBlobPdfUrl(rawData);
+      return;
+    }
+
+    try {
+      let base64Content = rawData;
+      if (rawData.includes(",")) {
+        base64Content = rawData.split(",")[1];
+      }
+      const binaryStr = atob(base64Content);
+      const len = binaryStr.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const objectUrl = URL.createObjectURL(blob);
+      setBlobPdfUrl(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } catch (err) {
+      console.error("Error creating PDF blob URL:", err);
+      setBlobPdfUrl(rawData);
+    }
+  }, [viewingPdfAlbaran]);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [hasAutoSynced, setHasAutoSynced] = useState(false);
 
@@ -883,19 +920,11 @@ export function HistoricoClientesView() {
               </div>
 
               <div className="flex items-center gap-2">
-                {viewingPdfAlbaran.pdf_data && (
+                {blobPdfUrl && (
                   <>
                     <button
                       onClick={() => {
-                        const byteCharacters = atob(viewingPdfAlbaran.pdf_data!.split(",")[1]);
-                        const byteNumbers = new Array(byteCharacters.length);
-                        for (let i = 0; i < byteCharacters.length; i++) {
-                          byteNumbers[i] = byteCharacters.charCodeAt(i);
-                        }
-                        const byteArray = new Uint8Array(byteNumbers);
-                        const blob = new Blob([byteArray], { type: "application/pdf" });
-                        const fileUrl = URL.createObjectURL(blob);
-                        window.open(fileUrl, "_blank");
+                        window.open(blobPdfUrl, "_blank");
                       }}
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0098f2] bg-[rgba(0,152,242,0.08)] hover:bg-[rgba(0,152,242,0.15)] rounded-xl transition cursor-pointer"
                       title="Abrir en pestaña nueva del navegador"
@@ -905,7 +934,7 @@ export function HistoricoClientesView() {
                     </button>
 
                     <a
-                      href={viewingPdfAlbaran.pdf_data}
+                      href={blobPdfUrl}
                       download={viewingPdfAlbaran.pdf_nombre || `Albaran_${viewingPdfAlbaran.numero_albaran}.pdf`}
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#0098f2] hover:bg-[#007ec9] rounded-xl transition shadow-xs cursor-pointer"
                     >
@@ -937,13 +966,39 @@ export function HistoricoClientesView() {
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 bg-slate-800 p-2 overflow-hidden flex items-center justify-center">
-              {viewingPdfAlbaran.pdf_data ? (
-                <iframe
-                  src={viewingPdfAlbaran.pdf_data}
-                  className="w-full h-full rounded-xl bg-white border-0"
-                  title={`PDF ${viewingPdfAlbaran.numero_albaran}`}
-                />
+            <div className="flex-1 bg-slate-900 p-2 overflow-hidden flex items-center justify-center relative">
+              {blobPdfUrl ? (
+                blobPdfUrl.startsWith("data:image/") ? (
+                  <img
+                    src={blobPdfUrl}
+                    alt={`Albarán ${viewingPdfAlbaran.numero_albaran}`}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                ) : (
+                  <object
+                    data={`${blobPdfUrl}#toolbar=1&navpanes=0`}
+                    type="application/pdf"
+                    className="w-full h-full rounded-xl bg-white"
+                  >
+                    <iframe
+                      src={`${blobPdfUrl}#toolbar=1`}
+                      className="w-full h-full rounded-xl bg-white border-0"
+                      title={`PDF ${viewingPdfAlbaran.numero_albaran}`}
+                    >
+                      <div className="text-center p-8 bg-white rounded-xl">
+                        <p className="text-sm font-semibold text-slate-800 mb-3">Tu navegador no pudo incrustar el visor de PDF directamente.</p>
+                        <a
+                          href={blobPdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0098f2] text-white rounded-xl font-semibold text-xs"
+                        >
+                          <ExternalLink className="w-4 h-4" /> Abrir PDF en Nueva Pestaña
+                        </a>
+                      </div>
+                    </iframe>
+                  </object>
+                )
               ) : viewingPdfAlbaran.pdf_url ? (
                 <div className="text-center p-8 bg-white rounded-2xl max-w-md shadow-lg border border-[#ccd1da]">
                   <FileText className="w-16 h-16 text-[#0098f2] mx-auto mb-4" />

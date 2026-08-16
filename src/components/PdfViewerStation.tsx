@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText,
   Maximize2,
@@ -39,6 +39,43 @@ export function PdfViewerStation({
   activeAlbaran,
 }: PdfViewerStationProps) {
   const [isFullscreenDoc, setIsFullscreenDoc] = useState(false);
+  const [blobPdfUrl, setBlobPdfUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeAlbaran?.pdf_data) {
+      setBlobPdfUrl(null);
+      return;
+    }
+
+    const rawData = activeAlbaran.pdf_data;
+    if (rawData.startsWith("data:image/")) {
+      setBlobPdfUrl(rawData);
+      return;
+    }
+
+    try {
+      let base64Content = rawData;
+      if (rawData.includes(",")) {
+        base64Content = rawData.split(",")[1];
+      }
+      const binaryStr = atob(base64Content);
+      const len = binaryStr.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const objectUrl = URL.createObjectURL(blob);
+      setBlobPdfUrl(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } catch (err) {
+      console.error("Error creating PDF blob URL:", err);
+      setBlobPdfUrl(rawData);
+    }
+  }, [activeAlbaran?.pdf_data]);
 
   const bobinas = activeAlbaran?.bobinas || [];
   const totalBobinas = bobinas.length;
@@ -129,19 +166,25 @@ export function PdfViewerStation({
 
         {/* Contenedor del PDF */}
         <div className="flex-1 rounded-xl border border-[#ccd1da] bg-[#f7fafc] overflow-hidden flex items-center justify-center min-h-[350px]">
-          {activeAlbaran?.pdf_data ? (
-            activeAlbaran.pdf_data.includes("data:image/") ? (
+          {blobPdfUrl ? (
+            blobPdfUrl.startsWith("data:image/") ? (
               <img
-                src={activeAlbaran.pdf_data}
+                src={blobPdfUrl}
                 alt="Albarán"
                 className="w-full h-full object-contain max-h-[500px]"
               />
             ) : (
-              <iframe
-                src={activeAlbaran.pdf_data}
-                className="w-full h-full min-h-[450px] border-0"
-                title="Visor de Albarán PDF"
-              />
+              <object
+                data={`${blobPdfUrl}#toolbar=1&navpanes=0`}
+                type="application/pdf"
+                className="w-full h-full min-h-[450px]"
+              >
+                <iframe
+                  src={`${blobPdfUrl}#toolbar=1`}
+                  className="w-full h-full min-h-[450px] border-0"
+                  title="Visor de Albarán PDF"
+                />
+              </object>
             )
           ) : (
             <div className="text-center p-8 text-[#8d8d8d]">
@@ -156,13 +199,13 @@ export function PdfViewerStation({
       </div>
 
       {/* Modal Pantalla Completa para Documento */}
-      {isFullscreenDoc && activeAlbaran?.pdf_data && (
+      {isFullscreenDoc && blobPdfUrl && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col p-4 sm:p-6 animate-fade-in-up">
           <div className="flex items-center justify-between text-white pb-3 border-b border-white/20">
             <div className="flex items-center gap-2.5">
               <FileText className="w-5 h-5 text-[#0098f2]" />
               <span className="font-bold text-base">
-                {activeAlbaran.pdf_nombre || `Albaran_${activeAlbaran.numero_albaran}.pdf`}
+                {activeAlbaran?.pdf_nombre || `Albaran_${activeAlbaran?.numero_albaran}.pdf`}
               </span>
             </div>
             <button
@@ -173,18 +216,24 @@ export function PdfViewerStation({
             </button>
           </div>
           <div className="flex-1 mt-4 rounded-xl overflow-hidden bg-white">
-            {activeAlbaran.pdf_data.includes("data:image/") ? (
+            {blobPdfUrl.startsWith("data:image/") ? (
               <img
-                src={activeAlbaran.pdf_data}
+                src={blobPdfUrl}
                 alt="Albarán Full"
                 className="w-full h-full object-contain"
               />
             ) : (
-              <iframe
-                src={activeAlbaran.pdf_data}
-                className="w-full h-full border-0"
-                title="Visor Albarán Full"
-              />
+              <object
+                data={`${blobPdfUrl}#toolbar=1`}
+                type="application/pdf"
+                className="w-full h-full"
+              >
+                <iframe
+                  src={`${blobPdfUrl}#toolbar=1`}
+                  className="w-full h-full border-0"
+                  title="Visor Albarán Full"
+                />
+              </object>
             )}
           </div>
         </div>
