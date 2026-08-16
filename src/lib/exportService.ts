@@ -31,6 +31,9 @@ export interface ExportAlbaran {
   es_personalizado?: boolean;
   campos_modificados?: string | null;
   cliente_original?: string | null;
+  pdf_nombre?: string | null;
+  pdf_data?: string | null;
+  pdf_url?: string | null;
   bobinas: ExportBobina[];
 }
 
