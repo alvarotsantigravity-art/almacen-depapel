@@ -1,0 +1,51 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Cliente {
+  id             String            @id @default(uuid())
+  nombre_empresa String            @unique
+  created_at     DateTime          @default(now())
+  albaranes      AlbaranCabecera[]
+}
+
+model AlbaranCabecera {
+  id                String          @id @default(uuid())
+  numero_albaran    String
+  fecha             String
+  cliente_id        String
+  cliente           Cliente         @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
+  fabricante        String
+  marca_papel       String
+  tipo_papel        String
+  ancho_papel_mm    Float
+  gramaje_papel_gsm Float
+  pdf_nombre               String?
+  pdf_data                 String?
+  almacen                  String          @default("ROTOMADRID")
+  calle                    String          @default("0")
+  certificacion_tipo       String?
+  certificacion_codigo     String?
+  certificacion_porcentaje Float?
+  es_personalizado         Boolean         @default(false)
+  campos_modificados       String?
+  cliente_original         String?
+  created_at               DateTime        @default(now())
+  bobinas                  BobinaDetalle[]
+}
+
+model BobinaDetalle {
+  id                   String          @id @default(uuid())
+  albaran_id           String
+  albaran              AlbaranCabecera @relation(fields: [albaran_id], references: [id], onDelete: Cascade)
+  codigo_barras_raw    String
+  identificador_bobina String
+  peso_kg              Float?
+  estado               String          @default("ESCANEADA")
+  fecha_escaneo        DateTime        @default(now())
+}

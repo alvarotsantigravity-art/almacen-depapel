@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1e1e1e;
+  --color-carbon: #0f0f0f;
+  --color-midnight: #0d111b;
+  --color-smoke: #666666;
+  --color-fog: #8d8d8d;
+  --color-ash: #999999;
+  --color-mist: #ccd1da;
+  --color-paper: #ffffff;
+  --color-snow: #f7fafc;
+  --color-concrete: #afb0b1;
+  --color-electric-blue: #0098f2;
+  --color-iris: #6c56fc;
+  --color-magenta: #f200ca;
+  --color-leaf: #5d9c06;
+  --color-coral: #ff6363;
+  --color-ice: #cfeafa;
+  --color-lavender: #e1e0fc;
+  --color-blush: #f6d2f4;
+
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-caveat: 'Caveat', cursive, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+:root {
+  /* Colors */
+  --color-ink: #1e1e1e;
+  --color-carbon: #0f0f0f;
+  --color-midnight: #0d111b;
+  --color-smoke: #666666;
+  --color-fog: #8d8d8d;
+  --color-ash: #999999;
+  --color-mist: #ccd1da;
+  --color-paper: #ffffff;
+  --color-snow: #f7fafc;
+  --color-concrete: #afb0b1;
+  --color-electric-blue: #0098f2;
+  --color-iris: #6c56fc;
+  --color-magenta: #f200ca;
+  --color-leaf: #5d9c06;
+  --color-coral: #ff6363;
+  --color-ice: #cfeafa;
+  --color-lavender: #e1e0fc;
+  --color-blush: #f6d2f4;
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-caveat: 'Caveat', cursive, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Shadows */
+  --shadow-subtle: rgba(10, 13, 20, 0.03) 0px 1px 2px 0px;
+  --shadow-subtle-2: rgb(36, 38, 40) 0px 0px 0px 1px, rgba(27, 28, 29, 0.48) 0px 1px 2px 0px;
+  --shadow-elevated: rgba(0, 0, 0, 0.05) 0px 2px 8px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px;
+  --shadow-float: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(204, 209, 218, 0.6);
+}
+
+body {
+  background-color: #ffffff;
+  color: #1e1e1e;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  letter-spacing: -0.015em;
+  background-image: 
+    radial-gradient(ellipse at top, rgba(207, 234, 250, 0.25) 0%, transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+  background-attachment: fixed;
+}
+
+/* Headings Tracking from DESIGN.md */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
+}
+
+/* Acctual Card Styles */
+.acctual-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #ccd1da;
+  box-shadow: 0 1px 3px rgba(10, 13, 20, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.acctual-card:hover {
+  border-color: #afb0b1;
+  box-shadow: 0 4px 12px rgba(10, 13, 20, 0.05);
+}
+
+.acctual-card-elevated {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #ccd1da;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 8px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px;
+}
+
+.acctual-panel {
+  background: #f7fafc;
+  border-radius: 24px;
+  border: 1px solid #ccd1da;
+}
+
+/* Buttons Acctual Style */
+.acctual-btn-primary {
+  background-color: #0d111b;
+  color: #ffffff;
+  border-radius: 100px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  box-shadow: rgb(36, 38, 40) 0px 0px 0px 1px, rgba(27, 28, 29, 0.48) 0px 1px 2px 0px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.acctual-btn-primary:hover {
+  background-color: #1e2538;
+  transform: translateY(-1px);
+  box-shadow: rgb(36, 38, 40) 0px 0px 0px 1px, rgba(27, 28, 29, 0.3) 0px 4px 8px 0px;
+}
+
+.acctual-btn-primary:active {
+  transform: translateY(0);
+}
+
+.acctual-btn-secondary {
+  background-color: #f7fafc;
+  color: #1e1e1e;
+  border: 1px solid #ccd1da;
+  border-radius: 100px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.acctual-btn-secondary:hover {
+  background-color: #ffffff;
+  border-color: #afb0b1;
+  box-shadow: 0 1px 3px rgba(10, 13, 20, 0.05);
+}
+
+.acctual-btn-ghost {
+  background-color: transparent;
+  color: #666666;
+  border-radius: 100px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.acctual-btn-ghost:hover {
+  color: #1e1e1e;
+  background-color: rgba(204, 209, 218, 0.2);
+}
+
+/* Nav Pills */
+.acctual-nav-pill {
+  padding: 0.45rem 1rem;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #666666;
+  background-color: transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.acctual-nav-pill:hover {
+  color: #1e1e1e;
+  background-color: #f0f4f8;
+}
+
+.acctual-nav-pill.active {
+  color: #0d111b;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(204, 209, 218, 0.8);
+}
+
+/* Eyebrow Label */
+.acctual-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0098f2;
+}
+
+/* Badges & Tags */
+.acctual-badge-verified {
+  background-color: rgba(0, 152, 242, 0.08);
+  color: #0098f2;
+  border: 1px solid rgba(0, 152, 242, 0.25);
+  border-radius: 100px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.acctual-badge-pending {
+  background-color: rgba(245, 166, 35, 0.1);
+  color: #c97a00;
+  border: 1px solid rgba(245, 166, 35, 0.3);
+  border-radius: 100px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.acctual-badge-duplicate {
+  background-color: rgba(255, 99, 99, 0.1);
+  color: #d93838;
+  border: 1px solid rgba(255, 99, 99, 0.3);
+  border-radius: 100px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Floating Paper Laser Line */
+@keyframes paperLaserSweep {
+  0% { top: 0%; opacity: 0.7; }
+  50% { top: 100%; opacity: 1; }
+  100% { top: 0%; opacity: 0.7; }
+}
+
+.paper-laser-scanner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #0098f2 20%, #6c56fc 50%, #0098f2 80%, transparent 100%);
+  box-shadow: 0 0 10px rgba(0, 152, 242, 0.6);
+  animation: paperLaserSweep 3.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccd1da;
+  border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #afb0b1;
+}
+
